@@ -1,7 +1,9 @@
 <template>
   <el-row>
   <el-col :span="12">
-  <el-card class="box-card">
+   <div class="block">
+    <el-carousel trigger="click">
+    <el-card class="box-card">
     <el-form ref="form" :model="form" label-width="80px">
     <el-form-item label="出发地" required>
       <el-input v-model="form.departure"></el-input>
@@ -17,6 +19,12 @@
     </el-form-item>
     </el-form>
   </el-card>
+      <el-carousel-item v-for="item in 4" :key="item">
+        <h3>{{ item }}</h3>
+      </el-carousel-item>
+    </el-carousel>
+  </div>
+  
       <div class="grid-content bg-purple">
       <div class="block">
       
