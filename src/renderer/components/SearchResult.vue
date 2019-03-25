@@ -58,16 +58,6 @@
       width="90">
     </el-table-column>
     <el-table-column
-      prop="sleepingClass"
-      label="动卧"
-      width="90">
-    </el-table-column>
-    <el-table-column
-      prop="noSeat"
-      label="无座"
-      width="90">
-    </el-table-column>
-    <el-table-column
       fixed="right"
       label="操作"
       width="120">
@@ -120,9 +110,7 @@
           cost: '04:28',
           businessClass: 100,
           firstClass: 100,
-          secondClass: 100,
-          sleepingClass: 100,
-          noSeat: 100
+          secondClass: 100
         }, {
           number: 'G5',
           departure: '北京南',
@@ -132,9 +120,7 @@
           cost: '05:48',
           businessClass: 100,
           firstClass: 10,
-          secondClass: 100,
-          sleepingClass: 100,
-          noSeat: 100
+          secondClass: 100
         }
         ],
         departureFilters: [{text: '北京南', value: '北京南'}, {text: '北京', value: '北京'}],
