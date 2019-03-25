@@ -1,25 +1,26 @@
 <template>
   <div id="app">
-  
-<el-menu
-  :default-active="activeIndex2"
-  class="el-menu-demo"
-  mode="horizontal"
-  @select="handleSelect"
-  background-color="#545c64"
-  text-color="#fff"
-  active-text-color="#ffd04b"
-  style="width: 100%">
-  <el-menu-item index="1"><router-link to="/showresult">处理中心</router-link></el-menu-item>
-  <el-menu-item index="3" ><router-link to="/addTrainNumber">处理中心</router-link></el-menu-item>
-  <el-menu-item index="4"><a href="baidu.com" target="_blank">订单管理</a></el-menu-item>
-</el-menu>
-
+  <el-container>
+  <el-aside width="200px">
+  <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+  <el-menu-item index="1">
+    <i class="el-icon-menu"></i>
+    <span slot="title">在线订票</span>
+    </el-menu-item>
+    <el-menu-item index="2">
+      <i class="el-icon-document"></i>
+      <span slot="title">我的订单</span>
+    </el-menu-item>
+    <el-menu-item index="3">
+      <i class="el-icon-setting"></i>
+      <span slot="title">管理面板</span>
+    </el-menu-item>
+  </el-menu>
+  </el-aside>
   <el-main><router-view></router-view></el-main>
-
-  <el-footer>Footer</el-footer>
-
-  </div>
+  </el-container>
+<router-link to="/showresult">处理中心</router-link>
+</div>
 </template>
 
 <script>
