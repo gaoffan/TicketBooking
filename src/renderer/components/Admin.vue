@@ -1,8 +1,11 @@
 <template>
-  <el-row>
-  <el-col :span="12">
-  <el-card class="box-card">
-    <el-form ref="form" :model="form" label-width="120px">
+  <el-tabs :tab-position="tabpos" style="">
+    <el-tab-pane label="记录修改">
+    <search-card @search="search"></search-card>
+    </el-tab-pane>
+    <el-tab-pane label="新增记录">
+    <el-card class="box-card">
+    <el-form ref="form" :model="form" label-width="120px" :inline="true">
     <el-form-item label="出发地" required>
       <el-input v-model="form.departure"></el-input>
     </el-form-item>
@@ -29,17 +32,22 @@
     <el-button type="primary" @click="submitForm('form')">提交</el-button>
     <el-button @click="resetForm('form')">重置</el-button>
     </el-form-item>
-
     </el-form>
   </el-card>
-    </el-col>
-    <el-col :span="12"><div class="grid-content bg-purple-light"></div></el-col>
-  </el-row>
+    </el-tab-pane>
+    
+  </el-tabs>
+
+  
 </template>
 
 <script>
+  import SearchCard from './Controls/SearchCard.vue'
   export default {
     name: 'main-page',
+    components: {
+      SearchCard
+    },
     methods: {
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
@@ -65,10 +73,14 @@
           value: '',
           key: Date.now()
         })
+      },
+      search () {
+        alert('aa')
       }
     },
     data () {
       return {
+        tabpos: 'left',
         form: {
           departure: '',
           arrival: '',

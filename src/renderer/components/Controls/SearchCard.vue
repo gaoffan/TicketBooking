@@ -21,13 +21,13 @@
 
 <script>
   export default {
-    name: 'main-page',
+    name: 'SearchCard',
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
       },
       onSubmit () {
-        alert('submit!')
+        this.$emit('search')
       }
     },
     data () {

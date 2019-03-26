@@ -1,6 +1,6 @@
 <template>
   <el-row>
-  <el-col :span="8" v-for="o in orders" :key="o">
+  <el-col :span="12" v-for="o in orders" :key="o">
     <el-card class="box-card input-card" shadow="hover">
     <div slot="header" class="clearfix">
     <span><strong>{{o.number}} {{o.departure}} - {{o.arrival}}</strong></span>
@@ -32,8 +32,15 @@
           class: '一等',
           seat: '3A',
           startTime: '9:00',
-          endTime: '12:00' }]
-      }
+          endTime: '12:00' }, {
+          number: 'G5',
+          departure: '北京西',
+          arrival: '上海虹桥',
+          class: '一等',
+          seat: '3A',
+          startTime: '9:00',
+          endTime: '12:00' }
+        ]}
     }
   }
 </script>
