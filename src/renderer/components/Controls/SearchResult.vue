@@ -1,4 +1,9 @@
 <template>
+<div>
+  <div class="topbar block">
+  <el-button circle icon="el-icon-back" @click="onBack"></el-button>
+     共找到 {{ tableData.length }} 项结果。
+  </div>
   <el-table
     :data="tableData"
     border
@@ -66,15 +71,17 @@
       </template>
     </el-table-column>
   </el-table>
+</div>
+  
 </template>
 
 
 <script>
   export default {
-    name: 'main-page',
+    name: 'SearchResult',
     methods: {
-      open (link) {
-        this.$electron.shell.openExternal(link)
+      onBack () {
+        this.$emit('onback')
       },
       onSubmit () {
         alert('submit!')
@@ -131,5 +138,9 @@
 </script>
 
 <style>
-  
+.topbar {
+  color: #303133;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+}
 </style>

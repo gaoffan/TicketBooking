@@ -24,7 +24,7 @@
     name: 'SearchCard',
     methods: {
       onSubmit () {
-        this.$emit('search')
+        this.$emit('search', this.form.departure, this.form.arrival, this.form.departureDate)
       }
     },
     data () {

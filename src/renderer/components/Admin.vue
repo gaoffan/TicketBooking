@@ -9,7 +9,7 @@
     <el-form-item label="车次" required>
         <el-input v-model="form.number"></el-input>
     </el-form-item>
-    <el-form-item v-for="(station, index) in form.stations" :label="'途径 ' + index" :key="station.key" required>
+    <el-form-item v-for="(station, index) in form.stations" :label="'途经 ' + index" :key="station.key" required>
         <el-input v-model="station.name"></el-input>
         <el-input class="time" placeholder="价格" v-model="station.price"></el-input>
         <el-time-select class="time" placeholder="出发时间" v-model="station.time" :picker-options="{start: '05:30',step: '00:01',end: '23:59'}"></el-time-select>
@@ -53,7 +53,10 @@
           dat += ' ' + this.form.stations[x].name + ' ' + this.form.stations[x].time + ' ' + this.form.stations[x].price
         }
         fs.appendFile('./data.txt', '\n' + dat, (err) => {
-          console.log(err)
+          if (!err) {
+            console.log('aa')
+            this.$message({message: '添加成功!', type: 'success', showClose: true})
+          }
         })
       },
       resetForm (formName) {

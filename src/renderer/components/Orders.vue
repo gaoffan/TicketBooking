@@ -1,6 +1,6 @@
 <template>
   <el-row>
-  <el-col :span="12" v-for="o in orders" :key="o">
+  <el-col :span="12" v-for="o in orders" :key="o.key">
     <el-card class="box-card input-card" shadow="hover">
     <div slot="header" class="clearfix">
     <span><strong>{{o.number}} {{o.departure}} - {{o.arrival}}</strong></span>

@@ -1,9 +1,7 @@
 <template>
   <el-container class="container">
   <el-header class="header">
-     <el-menu
-  router="true"
-  mode="horizontal"
+     <el-menu router mode="horizontal"
   background-color="#545c64"
   text-color="#fff"
   active-text-color="#ffd04b">
@@ -50,7 +48,7 @@
     width: 100%;
 }
 .header {
-        text-align: center;
-        padding: 0;
-    }
+    text-align: center;
+    padding: 0;
+}
 </style>

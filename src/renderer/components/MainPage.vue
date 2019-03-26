@@ -1,37 +1,36 @@
 <template>
 <div class="block">
-  <el-card class="box-card input-card">
-    <el-form ref="form" :model="form" label-width="80px">
-    <el-form-item label="出发地" required class="input">
-      <el-input v-model="form.departure"></el-input>
-    </el-form-item>
-    <el-form-item label="到达地" required class="input">
-      <el-input v-model="form.arrival"></el-input>
-    </el-form-item>
-    <el-form-item label="出发日期" prop="form.departureDate" required>
-      <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择出发日期" :picker-options="pickerOptions1"></el-date-picker>
-    </el-form-item>
-    <el-form-item>
-      <el-button icon="el-icon-search" type="primary" @click="onSubmit()">查询</el-button>
-    </el-form-item>
-    </el-form>
-  </el-card>
+    <search-card v-if="onsearch" @search="onSubmit"></search-card>
+  <search-result v-if="onresultShow" @onback="onBack"></search-result>
 </div>
 </template>
 
 <script>
+  import SearchCard from './Controls/SearchCard.vue'
+  import SearchResult from './Controls/SearchResult.vue'
   export default {
     name: 'main-page',
+    components: {
+      SearchCard, SearchResult
+    },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
       },
-      onSubmit () {
-        alert('submit!')
+      onSubmit (departure, arrival, departureDate) {
+        alert('submit!    ' + departure)
+        this.onsearch = false
+        this.onresultShow = true
+      },
+      onBack () {
+        this.onresultShow = false
+        this.onsearch = true
       }
     },
     data () {
       return {
+        onsearch: true,
+        onresultShow: false,
         pickerOptions1: {
           disabledDate (time) {
             return time.getTime() > Date.now()
