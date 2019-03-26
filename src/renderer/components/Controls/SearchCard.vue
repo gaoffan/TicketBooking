@@ -2,13 +2,13 @@
 <div class="block">
   <el-card class="box-card input-card">
     <el-form ref="form" :model="form" label-width="80px">
-    <el-form-item label="出发地" required class="input">
+    <el-form-item label="出发地" class="input">
       <el-input v-model="form.departure"></el-input>
     </el-form-item>
-    <el-form-item label="到达地" required class="input">
+    <el-form-item label="到达地" class="input">
       <el-input v-model="form.arrival"></el-input>
     </el-form-item>
-    <el-form-item label="出发日期" prop="form.departureDate" required>
+    <el-form-item label="出发日期">
       <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择出发日期" :picker-options="pickerOptions1"></el-date-picker>
     </el-form-item>
     <el-form-item>
@@ -23,9 +23,6 @@
   export default {
     name: 'SearchCard',
     methods: {
-      open (link) {
-        this.$electron.shell.openExternal(link)
-      },
       onSubmit () {
         this.$emit('search')
       }

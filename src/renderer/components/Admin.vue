@@ -28,10 +28,10 @@
         <el-input v-model="form.secondClass"></el-input>
     </el-form-item>
     <div class="bottom clearfix">
-    <el-button class="btn" type="primary" @click="submitForm('form')">提交</el-button>
-    <el-button class="btn" @click="resetForm('form')">重置</el-button>
+        <el-button class="btn" type="primary" @click="submit">提交</el-button>
+        <el-button class="btn" @click="resetForm('form')">重置</el-button>
     </div>
-    </el-form>
+    </el-form>              
   </el-card>
 </el-tab-pane> 
 </el-tabs>
@@ -39,20 +39,21 @@
 
 <script>
   import SearchCard from './Controls/SearchCard.vue'
+  let fs = require('fs')
   export default {
     name: 'admin-page',
     components: {
       SearchCard
     },
     methods: {
-      submitForm (formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!')
-          } else {
-            console.log('error submit!!')
-            return false
-          }
+      submit () {
+        console.log(this.form)
+        let dat = this.form.number + ' ' + this.form.businessClass + ' ' + this.form.firstClass + ' ' + this.form.secondClass + ' ' + this.form.stations.length
+        for (let x in this.form.stations) {
+          dat += ' ' + this.form.stations[x].name + ' ' + this.form.stations[x].time + ' ' + this.form.stations[x].price
+        }
+        fs.appendFile('./data.txt', '\n' + dat, (err) => {
+          console.log(err)
         })
       },
       resetForm (formName) {
