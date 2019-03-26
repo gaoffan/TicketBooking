@@ -1,12 +1,9 @@
 <template>
-  <div id="app">
-  <el-container style="border: 0px solid;">
-    <el-header style="padding:0px">
-  <el-menu
-  :default-active="activeIndex2"
+  <el-container class="container">
+  <el-header class="header">
+     <el-menu
   router="true"
   mode="horizontal"
-  @select="handleSelect"
   background-color="#545c64"
   text-color="#fff"
   active-text-color="#ffd04b">
@@ -26,8 +23,6 @@
   </el-header>
     <el-main><router-view></router-view></el-main>
   </el-container>
-
-</div>
 </template>
 
 <script>
@@ -47,4 +42,15 @@
   body {
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
+
+.container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+.header {
+        text-align: center;
+        padding: 0;
+    }
 </style>

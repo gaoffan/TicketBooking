@@ -5,20 +5,19 @@
     </el-tab-pane>
     <el-tab-pane label="新增记录">
     <el-card class="box-card">
-    <el-form ref="form" :model="form" label-width="120px" :inline="true">
-    <el-form-item label="出发地" required>
-      <el-input v-model="form.departure"></el-input>
+    <el-form ref="form" :model="form" label-width="120px">
+    <el-form-item label="车次" required>
+        <el-input v-model="form.number"></el-input>
     </el-form-item>
-    <el-form-item label="到达地" required>
-        <el-input v-model="form.arrival"></el-input>
+    <el-form-item v-for="(station, index) in form.stations" :label="'途径 ' + index" :key="station.key" required>
+        <el-input v-model="station.name"></el-input>
+        <el-input class="time" placeholder="价格" v-model="station.price"></el-input>
+        <el-time-select class="time" placeholder="出发时间" v-model="station.time" :picker-options="{start: '05:30',step: '00:01',end: '23:59'}"></el-time-select>
+        <el-button size="small" type="danger" @click.prevent="removeStation(station)">删除</el-button>
     </el-form-item>
-    <el-form-item label="日期" required>
-        <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择日期" :picker-options="pickerOptions1"></el-date-picker>
-    </el-form-item>
-    <el-form-item label="时间" required>
-        <el-time-select placeholder="出发时间" v-model="form.startTime" :picker-options="{start: '05:30',step: '00:01',end: '23:59'}"></el-time-select>
-        <el-time-select placeholder="到达时间" v-model="form.endTime" :picker-options="{ start: '05:30',step: '00:01',end: '23:59',minTime: startTime}"></el-time-select>
-    </el-form-item>
+    <div class="btn2">
+    <el-button class="btn2" type="success" @click="addStation">新增站点</el-button>
+    </div>
     <el-form-item label="商务座数量" required>
         <el-input v-model="form.businessClass"></el-input>
     </el-form-item>
@@ -28,23 +27,20 @@
     <el-form-item label="二等座数量" required>
         <el-input v-model="form.secondClass"></el-input>
     </el-form-item>
-     <el-form-item>
-    <el-button type="primary" @click="submitForm('form')">提交</el-button>
-    <el-button @click="resetForm('form')">重置</el-button>
-    </el-form-item>
+    <div class="bottom clearfix">
+    <el-button class="btn" type="primary" @click="submitForm('form')">提交</el-button>
+    <el-button class="btn" @click="resetForm('form')">重置</el-button>
+    </div>
     </el-form>
   </el-card>
-    </el-tab-pane>
-    
-  </el-tabs>
-
-  
+</el-tab-pane> 
+</el-tabs>
 </template>
 
 <script>
   import SearchCard from './Controls/SearchCard.vue'
   export default {
-    name: 'main-page',
+    name: 'admin-page',
     components: {
       SearchCard
     },
@@ -62,15 +58,17 @@
       resetForm (formName) {
         this.$refs[formName].resetFields()
       },
-      removeDomain (item) {
+      removeStation (item) {
         var index = this.form.stations.indexOf(item)
         if (index !== -1) {
           this.form.stations.splice(index, 1)
         }
       },
-      addDomain () {
+      addStation () {
         this.form.stations.push({
-          value: '',
+          name: '',
+          price: '',
+          time: '',
           key: Date.now()
         })
       },
@@ -82,14 +80,11 @@
       return {
         tabpos: 'left',
         form: {
-          departure: '',
-          arrival: '',
-          departureDate: '',
+          number: '',
           businessClass: '',
           firstClass: '',
           secondClass: '',
-          startTime: '',
-          endTime: ''
+          stations: [{ name: '', time: '', price: '' }]
         }
       }
     }
@@ -97,5 +92,15 @@
 </script>
 
 <style>
-  
+  .btn {
+    float: right;
+    margin: 0.5rem;
+  }
+  .btn2 {
+    text-align: center;
+    margin: 0.5rem
+  }
+  .time {
+      margin-top: 0.3rem;
+  }
 </style>
