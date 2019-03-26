@@ -14,7 +14,7 @@
       <i class="el-icon-menu"></i>
       <span slot="title">在线订票</span>
     </el-menu-item>
-    <el-menu-item index="2" route="/showresult">
+    <el-menu-item index="2" route="/orders">
       <i class="el-icon-document"></i>
       <span slot="title">我的订单</span>
     </el-menu-item>

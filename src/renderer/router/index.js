@@ -11,9 +11,9 @@ export default new Router({
       component: require('@/components/MainPage').default
     },
     {
-      path: '/showresult',
-      name: 'showresult-page',
-      component: require('@/components/SearchResult').default
+      path: '/orders',
+      name: 'orders-page',
+      component: require('@/components/orders').default
     },
     {
       path: '/addTrainNumber',
