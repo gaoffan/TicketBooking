@@ -1,7 +1,13 @@
 <template>
 <div class="block">
+    <div v-show="onsearch"> 
     <search-card v-if="onsearch" @search="onSubmit"></search-card>
-  <search-result v-if="onresultShow" @onback="onBack"></search-result>
+  </div>
+     <transition name="el-zoom-in-top">
+       <div v-show="onresultShow" class="transition-box"> 
+          <search-result v-if="onresultShow" @onback="onBack"></search-result>
+       </div>
+     </transition>
 </div>
 </template>
 
@@ -18,7 +24,7 @@
         this.$electron.shell.openExternal(link)
       },
       onSubmit (departure, arrival, departureDate) {
-        alert('submit!    ' + departure)
+        // alert('submit!    ' + departure)
         this.onsearch = false
         this.onresultShow = true
       },

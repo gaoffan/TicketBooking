@@ -1,10 +1,10 @@
 <template>
   <el-container class="container">
   <el-header class="header">
-     <el-menu router mode="horizontal"
-  background-color="#545c64"
-  text-color="#fff"
-  active-text-color="#ffd04b">
+     <el-menu router mode="horizontal" default-active="1"
+     background-color="#36424F"
+     text-color="#fff"
+  active-text-color="#707274">
     <el-menu-item index="1" route="/">
       <i class="el-icon-menu"></i>
       <span slot="title">在线订票</span>
