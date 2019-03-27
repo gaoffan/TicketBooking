@@ -1,7 +1,7 @@
 <template>
   <el-tabs :tab-position="tabpos" style="">
-    <el-tab-pane label="记录修改">
-    <search-card @search="search"></search-card>
+    <el-tab-pane label="记录管理">
+        <line-manager></line-manager>
     </el-tab-pane>
     <el-tab-pane label="新增记录">
     <el-card class="box-card">
@@ -38,12 +38,12 @@
 </template>
 
 <script>
-  import SearchCard from './Controls/SearchCard.vue'
+  import LineManager from './Controls/LineManager.vue'
   let fs = require('fs')
   export default {
     name: 'admin-page',
     components: {
-      SearchCard
+      LineManager
     },
     methods: {
       submit () {
