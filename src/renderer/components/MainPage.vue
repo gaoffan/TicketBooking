@@ -14,6 +14,7 @@
 <script>
   import SearchCard from './Controls/SearchCard.vue'
   import SearchResult from './Controls/SearchResult.vue'
+  const addon = require('../../gyp-cpp/build/Release/addon.node')
   export default {
     name: 'main-page',
     components: {
@@ -40,6 +41,11 @@
       onInit (date) {
         console.log(this.form.departureDate)
       }
+    },
+    created () {
+      console.log(addon)
+      // console.log(addon.hello1());
+      // console.log(addon.addOne(2));
     },
     data () {
       return {

@@ -33,7 +33,6 @@ if (process.platform === 'darwin') {
       { role: 'quit' }
     ]
   })
-  app.dock.title = '火车票管理系统'
 }
 
 function createWindow () {
