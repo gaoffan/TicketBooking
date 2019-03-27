@@ -25,14 +25,15 @@
         this.$electron.shell.openExternal(link)
       },
       onSubmit (departure, arrival, departureDate) {
-        // alert('submit!    ' + departure)
         if (!departureDate) {
           this.$message({message: '请选择日期！', type: 'warning'})
           return
         }
+        this.form.departureDate = departureDate
+        this.form.departure = departure
+        this.form.arrival = arrival
         this.onsearch = false
         this.onresultShow = true
-        this.form.departureDate = departureDate
       },
       onBack () {
         this.onresultShow = false

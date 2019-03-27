@@ -132,11 +132,71 @@
       }
     },
     created () {
+      let fs = require('fs')
       console.log(this.$parent.form.departureDate)
       this.form.date = this.$parent.form.departureDate
       for (let i = 1; i < 60; i++) {
         this.options.push({value: i, label: i, children: [{value: 'A', label: 'A(靠窗)'}, {value: 'B', label: 'B'}, {value: 'C', label: 'C'}, {value: 'E', label: 'E'}, {value: 'F', label: 'F(靠窗)'}]})
       }
+      const { ipcRenderer } = require('electron')
+      ipcRenderer.send('get-app-path')
+      ipcRenderer.on('got-app-path', (event, path) => {
+        this.path = path
+        fs.readFile(path + '/lines.json', (err, data) => {
+          if (!err) {
+            let lines = JSON.parse(data)
+            console.log(lines)
+            for (let item of lines) {
+              console.log(item.stations)
+              console.log(this.$parent.form.departure)
+              for (let s = 0; s < item.stations.length - 1; s++) {
+                if (item.stations[s].name.indexOf(this.$parent.form.departure) === 0) {
+                  console.log(s + '' + item.stations[s].name)
+                  for (let i = s; i < item.stations.length; i++) {
+                    if (item.stations[i].name.indexOf(this.$parent.form.arrival) === 0) {
+                      let time1 = item.stations[s].time.split(':')
+                      let time2 = item.stations[i].time.split(':')
+                      let costmin = (parseInt(time2[0]) * 60 + parseInt(time2[1])) - (parseInt(time1[0]) * 60 + parseInt(time1[1]))
+                      let hour = costmin / 60
+                      let mins = costmin % 60
+                      let str = hour.toString() + ':' + mins.toString()
+                      this.tableData.push({
+                        number: item.number,
+                        departure: item.stations[s].name,
+                        arrival: item.stations[i].name,
+                        departureTime: item.stations[s].time,
+                        arrivalTime: item.stations[i].time,
+                        cost: str,
+                        businessClass: item.businessClass,
+                        firstClass: item.firstClass,
+                        secondClass: item.secondClass,
+                        prize: item.stations[i].prize - item.stations[s].prize
+                      })
+                      break
+                    }
+                  }
+                }
+              }
+            }
+            let dep = []
+            let arr = []
+            for (let item of this.tableData) {
+              if (!dep.includes(item.departure)) {
+                dep.push(item.departure)
+                this.departureFilters.push({text: item.departure, value: item.departure})
+              }
+              if (!arr.includes(item.arrival)) {
+                arr.push(item.arrival)
+                this.arrivalFilters.push({text: item.arrival, value: item.arrival})
+              }
+            }
+            // this.tableData = lines
+            // this.$message({message: '读取完毕!', type: 'success', showClose: true})
+          } else {
+            this.$message({message: err, type: 'warning', showClose: true})
+          }
+        })
+      })
     },
     data () {
       return {
@@ -144,34 +204,14 @@
         dialogData: 0,
         form: {
           date: '1999-01-01',
-          seatClass: '1'
+          seatClass: '1',
+          departure: '',
+          arrival: '',
+          prize: ''
         },
-        tableData: [{
-          number: 'G1',
-          departure: '北京南',
-          arrival: '上海虹桥',
-          departureTime: '9:00',
-          arrivalTime: '13:28',
-          cost: '04:28',
-          businessClass: 100,
-          firstClass: 100,
-          secondClass: 100,
-          prize: 10000
-        }, {
-          number: 'G5',
-          departure: '北京南',
-          arrival: '上海虹桥',
-          departureTime: '7:00',
-          arrivalTime: '13:08',
-          cost: '05:48',
-          businessClass: 100,
-          firstClass: 10,
-          secondClass: 100,
-          prize: 10000
-        }
-        ],
-        departureFilters: [{text: '北京南', value: '北京南'}, {text: '北京', value: '北京'}],
-        arrivalFilters: [{text: '上海虹桥', value: '上海虹桥'}, {text: '上海', value: '上海'}],
+        tableData: [],
+        departureFilters: [],
+        arrivalFilters: [],
         options: [],
         selectedOptions: [],
         selectedOptions2: []
