@@ -1,6 +1,7 @@
 <template>
 <div class="block">
   <el-card class="box-card input-card">
+    <h3 class="t-c">车票查询</h3>
     <el-form ref="form" :model="form" label-width="80px">
     <el-form-item label="出发地" class="input">
       <el-input v-model="form.departure"></el-input>
@@ -11,9 +12,9 @@
     <el-form-item label="出发日期">
       <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择出发日期" :picker-options="pickerOptions1"></el-date-picker>
     </el-form-item>
-    <el-form-item>
+    <div class="t-c">
       <el-button icon="el-icon-search" type="primary" @click="onSubmit()" round>查询</el-button>
-    </el-form-item>
+    </div>
     </el-form>
   </el-card>
 </div>
@@ -31,7 +32,7 @@
       return {
         pickerOptions1: {
           disabledDate (time) {
-            return time.getTime() > Date.now()
+            return time.getTime() < Date.now() - 3600 * 1000 * 24
           },
           shortcuts: [{
             text: '今天',
@@ -70,5 +71,8 @@
   }
   .input-card{
     width: 400px;
+  }
+  .t-c {
+    text-align: center
   }
 </style>

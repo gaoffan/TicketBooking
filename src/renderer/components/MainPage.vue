@@ -25,6 +25,10 @@
       },
       onSubmit (departure, arrival, departureDate) {
         // alert('submit!    ' + departure)
+        if (!departureDate) {
+          this.$message({message: '请选择日期！', type: 'warning'})
+          return
+        }
         this.onsearch = false
         this.onresultShow = true
         this.form.departureDate = departureDate

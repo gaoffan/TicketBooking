@@ -1,10 +1,10 @@
 <template>
   <el-row>
-  <el-col :span="8" v-for="o in orders" :key="o.key">
+  <el-col :span="8" v-for="(o, index) in orders" :key="index">
   <el-card class="box-card" shadow="hover">
     <h1 style="margin:0;text-align:center">{{o.number}} {{o.departure}} - {{o.arrival}}</h1>
     <p style="color:#909399"> {{o.date}} {{o.startTime}} {{o.class}}座  座位:{{o.seat}}  </p>  
-      <el-button style="float: right" size="small" type="danger" round @click="onSubmit()">退票</el-button>
+      <el-button style="float: right" size="small" type="danger" round @click="onSubmit(index)">退票</el-button>
     </el-card>
   </el-col>
 </el-row>
@@ -17,8 +17,9 @@
       open (link) {
         this.$electron.shell.openExternal(link)
       },
-      onSubmit () {
-        alert('submit!')
+      onSubmit (key) {
+        console.log(key)
+        this.$message({message: '退票成功！', type: 'success'})
       }
     },
     data () {
