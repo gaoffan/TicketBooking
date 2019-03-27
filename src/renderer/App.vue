@@ -19,7 +19,7 @@
     </el-menu-item>
   </el-menu>
   </el-header>
-    <el-main><router-view></router-view></el-main>
+    <el-main class="main"><router-view></router-view></el-main>
   </el-container>
 </template>
 
@@ -50,5 +50,8 @@
 .header {
     text-align: center;
     padding: 0;
+}
+.main {
+  padding: 10px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 <div class="block">
-    <div v-show="onsearch"> 
+    <div class="input-card" v-show="onsearch"> 
     <search-card v-if="onsearch" @search="onSubmit"></search-card>
   </div>
      <transition name="el-zoom-in-top">
@@ -78,5 +78,11 @@
   }
   .input-card{
     width: 400px;
+    margin: 0px auto;
+    border-radius: 10px;
+  }
+    .text-center {
+    text-align: center;
+    margin: 0.5rem
   }
 </style>

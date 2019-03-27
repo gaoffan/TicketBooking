@@ -12,7 +12,7 @@
       <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择出发日期" :picker-options="pickerOptions1"></el-date-picker>
     </el-form-item>
     <el-form-item>
-      <el-button icon="el-icon-search" type="primary" @click="onSubmit()">查询</el-button>
+      <el-button icon="el-icon-search" type="primary" @click="onSubmit()" round>查询</el-button>
     </el-form-item>
     </el-form>
   </el-card>
