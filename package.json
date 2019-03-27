@@ -1,6 +1,6 @@
 {
   "name": "ticket-booking",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "goufaan",
   "description": "train ticket booking system",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "ticket-booking",
+    "productName": "火车票管理系统",
     "appId": "com.goufaan.ticketbooking",
     "directories": {
       "output": "build"

@@ -4,8 +4,8 @@
         <line-manager></line-manager>
     </el-tab-pane>
     <el-tab-pane label="新增记录">
-    <el-card class="box-card">
-    <el-form ref="form" :model="form" label-width="120px">
+    <el-card class="input-card">
+    <el-form ref="form" :model="form" label-width="120px" >
     <el-form-item label="车次" required>
         <el-input v-model="form.number"></el-input>
     </el-form-item>
@@ -28,8 +28,8 @@
         <el-input v-model="form.secondClass"></el-input>
     </el-form-item>
     <div class="bottom clearfix">
-        <el-button class="btn" type="primary" @click="submit">提交</el-button>
         <el-button class="btn" @click="resetForm('form')">重置</el-button>
+        <el-button class="btn" type="primary" @click="submit">提交</el-button>
     </div>
     </el-form>              
   </el-card>

@@ -15,14 +15,8 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
-const template = [
-  {
-    label: 'Help',
-    submenu: [
-      { label: 'Go To' }
-    ]
-  }
-]
+const template = []
+app.setName('火车票管理系统')
 
 if (process.platform === 'darwin') {
   template.unshift({
@@ -39,6 +33,7 @@ if (process.platform === 'darwin') {
       { role: 'quit' }
     ]
   })
+  app.dock.title = '火车票管理系统'
 }
 
 function createWindow () {
@@ -46,9 +41,13 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
+    // title: 'Ticket', // 火车票管理系统
     height: 500,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
 
   mainWindow.loadURL(winURL)
