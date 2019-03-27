@@ -150,10 +150,10 @@
               console.log(item.stations)
               console.log(this.$parent.form.departure)
               for (let s = 0; s < item.stations.length - 1; s++) {
-                if (item.stations[s].name.indexOf(this.$parent.form.departure) === 0) {
+                if (this.$parent.form.departure === '' || item.stations[s].name.indexOf(this.$parent.form.departure) === 0) {
                   console.log(s + '' + item.stations[s].name)
-                  for (let i = s; i < item.stations.length; i++) {
-                    if (item.stations[i].name.indexOf(this.$parent.form.arrival) === 0) {
+                  for (let i = s + 1; i < item.stations.length; i++) {
+                    if (this.$parent.form.arrival === '' || item.stations[i].name.indexOf(this.$parent.form.arrival) === 0) {
                       let time1 = item.stations[s].time.split(':')
                       let time2 = item.stations[i].time.split(':')
                       let costmin = (parseInt(time2[0]) * 60 + parseInt(time2[1])) - (parseInt(time1[0]) * 60 + parseInt(time1[1]))
@@ -172,7 +172,7 @@
                         secondClass: item.secondClass,
                         prize: item.stations[i].prize - item.stations[s].prize
                       })
-                      break
+                      // break
                     }
                   }
                 }

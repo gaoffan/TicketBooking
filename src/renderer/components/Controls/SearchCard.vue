@@ -58,7 +58,7 @@
         form: {
           departure: '',
           arrival: '',
-          departureDate: ''
+          departureDate: new Date()
         }
       }
     }

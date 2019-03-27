@@ -1,9 +1,9 @@
 <template>
-  <el-tabs :tab-position="tabpos" style="">
+  <el-tabs :tab-position="tabpos" style="" lazy @tab-click="refresh">
     <el-tab-pane label="记录管理">
-        <line-manager></line-manager>
+        <line-manager v-if="show"></line-manager>
     </el-tab-pane>
-    <el-tab-pane label="新增记录">
+    <el-tab-pane label="新增记录" lazy>
     <el-card class="input-card">
     <el-form ref="form" :model="form" label-width="120px" >
     <el-form-item label="车次" required>
@@ -92,8 +92,10 @@
           key: Date.now()
         })
       },
-      search () {
-        alert('aa')
+      refresh () {
+        console.log(0)
+        this.show = false
+        this.show = true
       }
     },
     created () {
@@ -106,6 +108,7 @@
     data () {
       return {
         path: '',
+        show: true,
         tabpos: 'left',
         form: {
           number: '',
