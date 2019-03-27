@@ -14,7 +14,7 @@
 <script>
   import SearchCard from './Controls/SearchCard.vue'
   import SearchResult from './Controls/SearchResult.vue'
-  const addon = require('../../gyp-cpp/build/Release/addon.node')
+  // import app from 'electron'
   export default {
     name: 'main-page',
     components: {
@@ -43,12 +43,14 @@
       }
     },
     created () {
-      console.log(addon)
+      // console.log(require('electron'))
+      // console.log()
       // console.log(addon.hello1());
       // console.log(addon.addOne(2));
     },
     data () {
       return {
+        path: process.cwd(),
         onsearch: true,
         onresultShow: false,
         resultData: '999',

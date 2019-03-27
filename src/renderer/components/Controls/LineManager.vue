@@ -12,10 +12,10 @@
       width="80">
     </el-table-column>
     <el-table-column
-      prop="pass"
+      prop="stations"
       label="途径">
       <template slot-scope="scope">
-        <el-tag class="tag" type="success" v-for="(item,index) in scope.row.pass" :key="index" size="medium">{{ scope.row.pass[index].name }}</el-tag>
+        <el-tag class="tag" type="success" v-for="(item,index) in scope.row.stations" :key="index" size="medium">{{ scope.row.stations[index].name }}</el-tag>
       </template>
     </el-table-column>
     <el-table-column
@@ -45,17 +45,42 @@
 </template>
 
 <script>
+  let fs = require('fs')
   export default {
     name: 'line-manager',
+    methods: {
+      onSubmit (index) {
+        this.tableData.splice(index, 1)
+        console.log(this.tableData)
+        fs.writeFile(this.path + '/lines.json', JSON.stringify(this.tableData), (err) => {
+          if (!err) {
+            this.$message({message: '删除成功!', type: 'success', showClose: true})
+          } else {
+            this.$message({message: err, type: 'warning', showClose: true})
+          }
+        })
+      }
+    },
+    created () {
+      const { ipcRenderer } = require('electron')
+      ipcRenderer.send('get-app-path')
+      ipcRenderer.on('got-app-path', (event, path) => {
+        this.path = path
+        fs.readFile(path + '/lines.json', (err, data) => {
+          if (!err) {
+            let lines = JSON.parse(data)
+            this.tableData = lines
+            // this.$message({message: '读取完毕!', type: 'success', showClose: true})
+          } else {
+            // this.$message({message: err, type: 'warning', showClose: true})
+          }
+        })
+      })
+    },
     data () {
       return {
-        tableData: [{
-          number: 'G1',
-          pass: [{name: '北京西', time: '9:00', prize: '0'}, {name: '济南北', time: '10:00', prize: '200'}, {name: '上海虹桥', time: '13:00', prize: '1000'}],
-          businessClass: 100,
-          firstClass: 100,
-          secondClass: 100
-        }]
+        path: '',
+        tableData: []
       }
     }
   }
@@ -63,19 +88,6 @@
 
 <style>
 
-.container {
-    position: relative;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-}
-.header {
-    text-align: center;
-    padding: 0;
-}
-.main {
-  padding: 10px;
-}
 .tag {
   margin-right: 0.2rem 
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, ipcMain } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
+  ? `http://localhost:9090`
   : `file://${__dirname}/index.html`
 
 const template = []
@@ -55,6 +55,7 @@ function createWindow () {
     mainWindow = null
   })
 }
+
 const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu)
 
@@ -70,4 +71,9 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+const path = require('path')
+ipcMain.on('get-app-path', (event) => {
+  event.sender.send('got-app-path', path.dirname(app.getPath('exe')))
 })

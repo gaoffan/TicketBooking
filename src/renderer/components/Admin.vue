@@ -48,14 +48,30 @@
     methods: {
       submit () {
         console.log(this.form)
-        let dat = this.form.number + ' ' + this.form.businessClass + ' ' + this.form.firstClass + ' ' + this.form.secondClass + ' ' + this.form.stations.length
-        for (let x in this.form.stations) {
-          dat += ' ' + this.form.stations[x].name + ' ' + this.form.stations[x].time + ' ' + this.form.stations[x].price
-        }
-        fs.appendFile('./data.txt', '\n' + dat, (err) => {
+        // let dat = this.form.number + ' ' + this.form.businessClass + ' ' + this.form.firstClass + ' ' + this.form.secondClass + ' ' + this.form.stations.length
+        // for (let x in this.form.stations) {
+        //  dat += ' ' + this.form.stations[x].name + ' ' + this.form.stations[x].time + ' ' + this.form.stations[x].price
+        // }
+        fs.readFile(this.path + '/lines.json', (err, data) => {
           if (!err) {
-            console.log('aa')
-            this.$message({message: '添加成功!', type: 'success', showClose: true})
+            let lines = JSON.parse(data)
+            lines.push(this.form)
+            fs.writeFile(this.path + '/lines.json', JSON.stringify(lines), (err) => {
+              if (!err) {
+                this.$message({message: '添加成功!', type: 'success', showClose: true})
+              } else {
+                this.$message({message: err, type: 'warning', showClose: true})
+              }
+            })
+          } else {
+            let arr = [this.form]
+            fs.writeFile(this.path + '/lines.json', JSON.stringify(arr), (err) => {
+              if (!err) {
+                this.$message({message: '添加成功!', type: 'success', showClose: true})
+              } else {
+                this.$message({message: err, type: 'warning', showClose: true})
+              }
+            })
           }
         })
       },
@@ -80,8 +96,16 @@
         alert('aa')
       }
     },
+    created () {
+      const { ipcRenderer } = require('electron')
+      ipcRenderer.send('get-app-path')
+      ipcRenderer.on('got-app-path', (event, path) => {
+        this.path = path
+      })
+    },
     data () {
       return {
+        path: '',
         tabpos: 'left',
         form: {
           number: '',
