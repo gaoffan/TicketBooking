@@ -5,7 +5,7 @@
   </div>
      <transition name="el-zoom-in-top">
        <div v-show="onresultShow" class="transition-box"> 
-          <search-result v-if="onresultShow" @onback="onBack"></search-result>
+          <search-result v-if="onresultShow" @onback="onBack" @oninit="onInit"></search-result>
        </div>
      </transition>
 </div>
@@ -27,16 +27,21 @@
         // alert('submit!    ' + departure)
         this.onsearch = false
         this.onresultShow = true
+        this.form.departureDate = departureDate
       },
       onBack () {
         this.onresultShow = false
         this.onsearch = true
+      },
+      onInit (date) {
+        console.log(this.form.departureDate)
       }
     },
     data () {
       return {
         onsearch: true,
         onresultShow: false,
+        resultData: '999',
         pickerOptions1: {
           disabledDate (time) {
             return time.getTime() > Date.now()

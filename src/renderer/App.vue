@@ -28,8 +28,7 @@
     name: 'ticket-booking',
     data () {
       return {
-        activeIndex: '1',
-        activeIndex2: '1'
+        activeIndex: '1'
       }
     }
   }
