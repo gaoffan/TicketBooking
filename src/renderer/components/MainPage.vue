@@ -32,10 +32,10 @@
         fs.readFile(this.path + '/lines.json', (err, data) => {
           if (!err) {
             let lines = JSON.parse(data)
-            console.log(lines)
+            // console.log(lines)
             for (let item of lines) {
-              console.log(item.stations)
-              console.log(departure)
+              // console.log(item.stations)
+              // console.log(departure)
               for (let s = 0; s < item.stations.length - 1; s++) {
                 if (departure === '' || item.stations[s].name.indexOf(departure) === 0) {
                   console.log(item.stations[s].price)
@@ -47,6 +47,7 @@
                       let hour = costmin / 60
                       let mins = costmin % 60
                       let str = hour.toString() + ':' + mins.toString()
+                      console.log(item.secondClass + '111')
                       this.$refs.result.tableData.push({
                         number: item.number,
                         departure: item.stations[s].name,
@@ -54,9 +55,9 @@
                         departureTime: item.stations[s].time,
                         arrivalTime: item.stations[i].time,
                         cost: str,
-                        businessClass: item.businessClass,
-                        firstClass: item.firstClass,
-                        secondClass: item.secondClass,
+                        businessClass: parseInt(item.businessClass),
+                        firstClass: parseInt(item.firstClass),
+                        secondClass: parseInt(item.secondClass),
                         price: parseInt(item.stations[i].price) - parseInt(item.stations[s].price)
                       })
                     }
@@ -64,7 +65,7 @@
                 }
               }
             }
-            console.log(this.$refs.result.tableData)
+            // console.log(this.$refs.result.tableData)
             let dep = []
             let arr = []
             for (let item of this.tableData) {
@@ -77,6 +78,28 @@
                 this.$refs.result.arrivalFilters.push({text: item.arrival, value: item.arrival})
               }
             }
+            console.log(233)
+            fs.readFile(this.path + '/tickets.json', (err, data) => {
+              if (!err) {
+                let ordersSaved = JSON.parse(data)
+                // console.log(ordersSaved)
+                for (let i of ordersSaved) {
+                  for (let x of this.$refs.result.tableData) {
+                    if (x.number === i.number) {
+                      console.log(i.number)
+                      if (i.seatClass === '1') {
+                        x.secondClass--
+                        console.log(x.secondClass)
+                      } else if (i.seatClass === '2') {
+                        x.firstClass--
+                      } else {
+                        x.businessClass--
+                      }
+                    }
+                  }
+                }
+              }
+            })
           } else {
             this.$message({message: err, type: 'warning', showClose: true})
           }

@@ -112,10 +112,10 @@
         tabpos: 'left',
         form: {
           number: '',
-          businessClass: '',
-          firstClass: '',
-          secondClass: '',
-          stations: [{ name: '', time: '', price: '' }]
+          businessClass: 100,
+          firstClass: 100,
+          secondClass: 100,
+          stations: [{ name: '', time: '', price: 0 }]
         }
       }
     }
