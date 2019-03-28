@@ -2,8 +2,8 @@
   <el-row>
   <el-col :span="8" v-for="(o, index) in orders" :key="index">
   <el-card class="box-card" shadow="hover">
-    <h1 style="margin:0;text-align:center">{{o.number}} {{o.departure}} - {{o.arrival}}</h1>
-    <p style="color:#909399"> {{o.date}} ## {{o.startTime}} <br> {{o.class}}座  座位:{{o.seat}}  </p>  
+    <h1 style="margin:0;text-align:center">{{o.number}} {{o.departure}} -> {{o.arrival}}</h1>
+    <p style="color:#909399"> {{o.date}}  {{o.startTime}}出发 <br> {{o.class}}座  座位:{{o.seat}}  </p>  
       <el-button style="float: right" size="small" type="danger" round @click="onSubmit(index)">退票</el-button>
     </el-card>
   </el-col>
@@ -11,6 +11,7 @@
 </template>
 
 <script>
+  let fs = require('fs')
   export default {
     name: 'orders-page',
     methods: {
@@ -18,33 +19,47 @@
         this.$electron.shell.openExternal(link)
       },
       onSubmit (key) {
-        console.log(key)
-        this.$message({message: '退票成功！', type: 'success'})
+        // console.log(key)
+        fs.readFile(this.path + '/tickets.json', (err, data) => {
+          if (!err) {
+            this.ordersSaved.splice(key, 1)
+            this.orders.splice(key, 1)
+            console.log(this.ordersSaved)
+            fs.writeFile(this.path + '/tickets.json', JSON.stringify(this.ordersSaved), (err) => {
+              if (!err) {
+                this.$message({message: '退票成功！', type: 'success'})
+              }
+            })
+          } else {
+            this.$message({message: '没有记录！', type: 'warning', showClose: true})
+          }
+        })
       }
     },
     created () {
-      let fs = require('fs')
       const { ipcRenderer } = require('electron')
       ipcRenderer.send('get-app-path')
       ipcRenderer.on('got-app-path', (event, path) => {
+        this.path = path
         fs.readFile(path + '/tickets.json', (err, data) => {
           if (!err) {
-            let recs = JSON.parse(data)
+            this.ordersSaved = JSON.parse(data)
             // console.log(recs)
-            for (let i of recs) {
+            for (let i of this.ordersSaved) {
               let text = ''
               if (i.seatClass === '1') {
-                text = '二等座'
+                text = '二等'
               } else if (i.seatClass === '2') {
-                text = '一等座'
+                text = '一等'
               } else {
-                text = '商务座'
+                text = '商务'
               }
               this.orders.push({
                 number: i.number,
                 departure: i.departure,
                 arrival: i.arrival,
-                date: i.date,
+                startTime: i.departureTime,
+                date: i.date.slice(0, 10),
                 seat: i.seat[0] + i.seat[1],
                 class: text
               })
@@ -57,7 +72,9 @@
     },
     data () {
       return {
-        orders: []
+        path: '',
+        orders: [],
+        ordersSaved: []
       }
     }
   }

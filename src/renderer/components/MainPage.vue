@@ -98,6 +98,7 @@
             departure: form.departure,
             arrival: form.arrival,
             date: form.date,
+            departureTime: form.departureTime,
             seat: form.seat[i]
           })
         }

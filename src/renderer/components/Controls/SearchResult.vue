@@ -74,7 +74,7 @@
   </el-table>
   <el-dialog title="预定车票" :visible.sync="dialogFormVisible" width="600px">
     <div style="text-align:center">
-    <h1>{{buyTicketForm.number}} {{buyTicketForm.departure}} -- {{buyTicketForm.arrival}} {{buyTicketForm.departureTime}} 
+    <h1>{{buyTicketForm.number}} {{buyTicketForm.departure}} -> {{buyTicketForm.arrival}} {{buyTicketForm.departureTime}} 
       <red>        ¥{{buyTicketForm.price}} / 张</red></h1>
     </div>
     <el-form :model="buyTicketForm" label-width="80px"> 
@@ -117,6 +117,7 @@
       },
       onBuy () {
         this.$emit('onbuy', this.buyTicketForm) // 买票
+        this.dialogFormVisible = false
       },
       deleteRow (index, rows) {
         rows.splice(index, 1)
