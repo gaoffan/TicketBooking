@@ -90,7 +90,39 @@
         this.onsearch = true
       },
       onBuy (form) {
-        console.log(form)
+        let dat = []
+        for (let i = 0; i < form.count; i++) {
+          dat.push({
+            number: form.number,
+            seatClass: form.seatClass,
+            departure: form.departure,
+            arrival: form.arrival,
+            date: form.date,
+            seat: form.seat[i]
+          })
+        }
+        console.log(dat)
+        fs.readFile(this.path + '/tickets.json', (err, data) => {
+          if (!err) {
+            let lines = JSON.parse(data)
+            let newd = lines.concat(dat)
+            fs.writeFile(this.path + '/tickets.json', JSON.stringify(newd), (err) => {
+              if (!err) {
+                this.$message({message: '购买成功!', type: 'success', showClose: true})
+              } else {
+                this.$message({message: err, type: 'warning', showClose: true})
+              }
+            })
+          } else {
+            fs.writeFile(this.path + '/tickets.json', JSON.stringify(dat), (err) => {
+              if (!err) {
+                this.$message({message: '购买成功!', type: 'success', showClose: true})
+              } else {
+                this.$message({message: err, type: 'warning', showClose: true})
+              }
+            })
+          }
+        })
       },
       onInit (date) {
         console.log(this.form.departureDate)

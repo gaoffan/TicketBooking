@@ -22,6 +22,16 @@
         this.$message({message: '退票成功！', type: 'success'})
       }
     },
+    created () {
+      let fs = require('fs')
+      fs.readFile(this.path + '/tickets.json', (err, data) => {
+        if (!err) {
+
+        } else {
+          this.$message({message: '没有记录！', type: 'warning', showClose: true})
+        }
+      })
+    },
     data () {
       return {
         orders: [{

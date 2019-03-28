@@ -10,7 +10,7 @@
       <el-input v-model="form.arrival"></el-input>
     </el-form-item>
     <el-form-item label="出发日期">
-      <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择出发日期" :picker-options="pickerOptions1"></el-date-picker>
+      <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择出发日期" :picker-options="pickerOptions1" value-format="yyyy-MM-dd"></el-date-picker>
     </el-form-item>
     <div class="t-c">
       <el-button icon="el-icon-search" type="primary" @click="onSubmit()" round>查询</el-button>

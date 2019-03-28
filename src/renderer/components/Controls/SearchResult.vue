@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="topbar block">
-  <el-button circle icon="el-icon-back" @click="onBack"></el-button>
+  <el-button circle icon="el-icon-back" @click="onBack" value-format="yyyy-MM-dd"></el-button>
      共找到 {{ tableData.length }} 项结果。
      <el-date-picker style="float:right" v-model="buyTicketForm.date" align="right" type="date"></el-date-picker>
   </div>
@@ -92,7 +92,7 @@
     </el-form>    
   <span slot="footer" class="dialog-footer">
     <red>共需支付: ¥{{buyTicketForm.totalprice}}</red>
-  <el-button type="primary" @click="onBuy(dialogData)">确定</el-button>
+  <el-button type="primary" @click="onBuy()">确定</el-button>
   <el-button @click="dialogFormVisible = false">取消</el-button>
   </span>
 </el-dialog>
@@ -115,7 +115,7 @@
         this.buyTicketForm.baseprice = this.tableData[i].price
         this.dialogFormVisible = true
       },
-      onBuy (i) {
+      onBuy () {
         this.$emit('onbuy', this.buyTicketForm)
       },
       deleteRow (index, rows) {
@@ -153,7 +153,7 @@
       return {
         dialogFormVisible: false,
         buyTicketForm: {
-          date: '1999-01-01',
+          date: '',
           number: '',
           departure: '',
           departureTime: '',
