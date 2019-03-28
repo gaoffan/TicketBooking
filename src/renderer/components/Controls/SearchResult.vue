@@ -75,13 +75,16 @@
   <el-dialog title="预定车票" :visible.sync="dialogFormVisible" width="600px">
     <div style="text-align:center">
     <h1>{{buyTicketForm.number}} {{buyTicketForm.departure}} -> {{buyTicketForm.arrival}} {{buyTicketForm.departureTime}} 
-      <red>        ¥{{buyTicketForm.price}} / 张</red></h1>
+      <red>        ¥{{buyTicketForm.price}}/张</red></h1>
     </div>
     <el-form :model="buyTicketForm" label-width="80px"> 
     <el-form-item label="席位等级">
-    <el-radio v-model="buyTicketForm.seatClass" label="3" border size="medium">商务座</el-radio>
-    <el-radio v-model="buyTicketForm.seatClass" label="2" border size="medium">一等座</el-radio>
-    <el-radio v-model="buyTicketForm.seatClass" label="1" border size="medium">二等座</el-radio>
+    <el-radio v-model="buyTicketForm.seatClass" :disabled="tableData[index].businessClass === 0" 
+    label="3" border size="medium" @change="onClassChange">商务座</el-radio>
+    <el-radio v-model="buyTicketForm.seatClass" :disabled="tableData[index].firstClass === 0" 
+    label="2" border size="medium" @change="onClassChange">一等座</el-radio>
+    <el-radio v-model="buyTicketForm.seatClass" :disabled="tableData[index].secondClass === 0" 
+    label="1" border size="medium" @change="onClassChange">二等座</el-radio>
     </el-form-item>
     <el-form-item label="购买数量">
       <el-input-number size="small" v-model="buyTicketForm.count" :min="1" :max="5"></el-input-number>
@@ -107,7 +110,66 @@
       onBack () {
         this.$emit('onback')
       },
+      onClassChange (cls) {
+        this.options = []
+        if (cls === '3') {
+          for (let j = 1; j < 4; j++) {
+            let child = {
+              value: j,
+              label: j + '车',
+              children: []
+            }
+            this.options.push(child)
+            for (let i = 1; i < 10; i++) {
+              child.children.push({
+                value: i,
+                label: i + '列',
+                children: [
+                  {value: 'A', label: 'A'}, {value: 'F', label: 'F'}
+                ]
+              })
+            }
+          }
+        } else if (cls === '2') {
+          for (let j = 4; j < 10; j++) {
+            let child = {
+              value: j,
+              label: j + '车',
+              children: []
+            }
+            this.options.push(child)
+            for (let i = 1; i < 20; i++) {
+              child.children.push({
+                value: i,
+                label: i + '列',
+                children: [
+                  {value: 'A', label: 'A(靠窗)'}, {value: 'B', label: 'B'}, {value: 'E', label: 'E'}, {value: 'F', label: 'F(靠窗)'}
+                ]
+              })
+            }
+          }
+        } else {
+          for (let j = 10; j < 17; j++) {
+            let child = {
+              value: j,
+              label: j + '车',
+              children: []
+            }
+            this.options.push(child)
+            for (let i = 1; i < 60; i++) {
+              child.children.push({
+                value: i,
+                label: i + '列',
+                children: [
+                  {value: 'A', label: 'A(靠窗)'}, {value: 'B', label: 'B'}, {value: 'C', label: 'C'}, {value: 'E', label: 'E'}, {value: 'F', label: 'F(靠窗)'}
+                ]
+              })
+            }
+          }
+        }
+      },
       onSubmit (i) {
+        this.index = i
         this.buyTicketForm.number = this.tableData[i].number
         this.buyTicketForm.departure = this.tableData[i].departure
         this.buyTicketForm.arrival = this.tableData[i].arrival
@@ -116,6 +178,25 @@
         this.dialogFormVisible = true
       },
       onBuy () {
+        if (!this.buyTicketForm.seatClass) {
+          this.$message({message: '请选择席位等级！', type: 'warning'})
+          return
+        }
+        // console.log(this.buyTicketForm.seat)
+        let seat = []
+        for (let i of this.buyTicketForm.seat) {
+          if (i.value.length === 0) {
+            this.$message({message: '请选择座位！', type: 'warning'})
+            return
+          } else {
+            if (seat.includes(i.value[0] + i.value[1] + i.value[2])) {
+              this.$message({message: '座位不能相同！', type: 'warning'})
+              return
+            }
+            seat.push(i.value[0] + i.value[1] + i.value[2])
+          }
+        }
+        console.log(seat)
         this.$emit('onbuy', this.buyTicketForm) // 买票
         this.dialogFormVisible = false
       },
@@ -145,13 +226,11 @@
     created () {
       console.log(this.$parent.form.departureDate)
       this.buyTicketForm.date = this.$parent.form.departureDate
-      for (let i = 1; i < 60; i++) {
-        this.options.push({value: i, label: i, children: [{value: 'A', label: 'A(靠窗)'}, {value: 'B', label: 'B'}, {value: 'C', label: 'C'}, {value: 'E', label: 'E'}, {value: 'F', label: 'F(靠窗)'}]})
-      }
       console.log(this.options)
     },
     data () {
       return {
+        index: 0,
         dialogFormVisible: false,
         buyTicketForm: {
           date: '',
@@ -159,7 +238,7 @@
           departure: '',
           departureTime: '',
           arrival: '',
-          seatClass: '1',
+          seatClass: '',
           baseprice: '',
           price: '',
           count: 1,

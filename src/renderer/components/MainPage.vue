@@ -86,10 +86,10 @@
                 for (let i of ordersSaved) {
                   for (let x of this.$refs.result.tableData) {
                     if (x.number === i.number) {
-                      console.log(i.number)
+                      // console.log(i.number)
                       if (i.seatClass === '1') {
                         x.secondClass--
-                        console.log(x.secondClass)
+                        // console.log(x.secondClass)
                       } else if (i.seatClass === '2') {
                         x.firstClass--
                       } else {

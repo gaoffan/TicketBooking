@@ -60,7 +60,7 @@
                 arrival: i.arrival,
                 startTime: i.departureTime,
                 date: i.date.slice(0, 10),
-                seat: i.seat[0] + i.seat[1],
+                seat: i.seat.value[0] + i.seat.value[1] + i.seat.value[2],
                 class: text
               })
             }
