@@ -3,7 +3,7 @@
   <el-col :span="8" v-for="(o, index) in orders" :key="index">
   <el-card class="box-card" shadow="hover">
     <h1 style="margin:0;text-align:center">{{o.number}} {{o.departure}} - {{o.arrival}}</h1>
-    <p style="color:#909399"> {{o.date}} {{o.startTime}} {{o.class}}座  座位:{{o.seat}}  </p>  
+    <p style="color:#909399"> {{o.date}} ## {{o.startTime}} <br> {{o.class}}座  座位:{{o.seat}}  </p>  
       <el-button style="float: right" size="small" type="danger" round @click="onSubmit(index)">退票</el-button>
     </el-card>
   </el-col>
@@ -24,46 +24,41 @@
     },
     created () {
       let fs = require('fs')
-      fs.readFile(this.path + '/tickets.json', (err, data) => {
-        if (!err) {
-
-        } else {
-          this.$message({message: '没有记录！', type: 'warning', showClose: true})
-        }
+      const { ipcRenderer } = require('electron')
+      ipcRenderer.send('get-app-path')
+      ipcRenderer.on('got-app-path', (event, path) => {
+        fs.readFile(path + '/tickets.json', (err, data) => {
+          if (!err) {
+            let recs = JSON.parse(data)
+            // console.log(recs)
+            for (let i of recs) {
+              let text = ''
+              if (i.seatClass === '1') {
+                text = '二等座'
+              } else if (i.seatClass === '2') {
+                text = '一等座'
+              } else {
+                text = '商务座'
+              }
+              this.orders.push({
+                number: i.number,
+                departure: i.departure,
+                arrival: i.arrival,
+                date: i.date,
+                seat: i.seat[0] + i.seat[1],
+                class: text
+              })
+            }
+          } else {
+            this.$message({message: '没有记录！', type: 'warning', showClose: true})
+          }
+        })
       })
     },
     data () {
       return {
-        orders: [{
-          number: 'G1',
-          departure: '北京西',
-          arrival: '上海虹桥',
-          class: '一等',
-          seat: '3A',
-          startTime: '9:00',
-          date: '2019-03-27' }, {
-          number: 'G5',
-          departure: '北京西',
-          arrival: '上海虹桥',
-          class: '一等',
-          seat: '3A',
-          startTime: '9:00',
-          date: '2019-03-27' }, {
-          number: 'G5',
-          departure: '北京西',
-          arrival: '上海虹桥',
-          class: '一等',
-          seat: '3A',
-          startTime: '9:00',
-          date: '2019-03-27' }, {
-          number: 'G5',
-          departure: '北京西',
-          arrival: '上海虹桥',
-          class: '一等',
-          seat: '3A',
-          startTime: '9:00',
-          date: '2019-03-27' }
-        ]}
+        orders: []
+      }
     }
   }
 </script>

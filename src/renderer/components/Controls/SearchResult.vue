@@ -1,9 +1,9 @@
 <template>
 <div>
   <div class="topbar block">
-  <el-button circle icon="el-icon-back" @click="onBack" value-format="yyyy-MM-dd"></el-button>
+  <el-button circle icon="el-icon-back" @click="onBack"></el-button>
      共找到 {{ tableData.length }} 项结果。
-     <el-date-picker style="float:right" v-model="buyTicketForm.date" align="right" type="date"></el-date-picker>
+     <el-date-picker style="float:right" v-model="buyTicketForm.date" align="right" type="date" value-format="yyyy-MM-dd"></el-date-picker>
   </div>
   <el-table
     :data="tableData"
@@ -116,7 +116,7 @@
         this.dialogFormVisible = true
       },
       onBuy () {
-        this.$emit('onbuy', this.buyTicketForm)
+        this.$emit('onbuy', this.buyTicketForm) // 买票
       },
       deleteRow (index, rows) {
         rows.splice(index, 1)

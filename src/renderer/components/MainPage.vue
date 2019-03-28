@@ -91,7 +91,7 @@
       },
       onBuy (form) {
         let dat = []
-        for (let i = 0; i < form.count; i++) {
+        for (let i = 0; i < form.count; i++) { // 生成一张一张的票
           dat.push({
             number: form.number,
             seatClass: form.seatClass,
@@ -102,7 +102,7 @@
           })
         }
         console.log(dat)
-        fs.readFile(this.path + '/tickets.json', (err, data) => {
+        fs.readFile(this.path + '/tickets.json', (err, data) => { // 写入文件
           if (!err) {
             let lines = JSON.parse(data)
             let newd = lines.concat(dat)
