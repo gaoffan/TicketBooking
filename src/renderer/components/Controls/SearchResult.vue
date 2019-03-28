@@ -3,7 +3,7 @@
   <div class="topbar block">
   <el-button circle icon="el-icon-back" @click="onBack"></el-button>
      共找到 {{ tableData.length }} 项结果。
-     <el-date-picker style="float:right" v-model="form.date" align="right" type="date"></el-date-picker>
+     <el-date-picker style="float:right" v-model="buyTicketForm.date" align="right" type="date"></el-date-picker>
   </div>
   <el-table
     :data="tableData"
@@ -66,7 +66,7 @@
     <el-table-column
       fixed="right"
       label="操作"
-      width="120">
+      width="100">
       <template slot-scope="scope">
         <el-button type="primary" size="mini" @click="onSubmit(scope.$index)">预定</el-button>
       </template>
@@ -74,22 +74,25 @@
   </el-table>
   <el-dialog title="预定车票" :visible.sync="dialogFormVisible" width="600px">
     <div style="text-align:center">
-    <h1>{{tableData[dialogData].number}} {{tableData[dialogData].departure}} -- {{tableData[dialogData].arrival}} {{tableData[dialogData].departureTime}} 
-      <red>        ¥{{tableData[dialogData].prize}}</red></h1>
+    <h1>{{buyTicketForm.number}} {{buyTicketForm.departure}} -- {{buyTicketForm.arrival}} {{buyTicketForm.departureTime}} 
+      <red>        ¥{{buyTicketForm.price}} / 张</red></h1>
     </div>
-    <el-form :model="form" label-width="80px"> 
+    <el-form :model="buyTicketForm" label-width="80px"> 
     <el-form-item label="席位等级">
-    <el-radio v-model="form.seatClass" label="1" border size="medium">商务座</el-radio>
-    <el-radio v-model="form.seatClass" label="2" border size="medium">一等座</el-radio>
-    <el-radio v-model="form.seatClass" label="3" border size="medium">二等座</el-radio>
+    <el-radio v-model="buyTicketForm.seatClass" label="3" border size="medium">商务座</el-radio>
+    <el-radio v-model="buyTicketForm.seatClass" label="2" border size="medium">一等座</el-radio>
+    <el-radio v-model="buyTicketForm.seatClass" label="1" border size="medium">二等座</el-radio>
     </el-form-item>
-    <el-form-item label="选座">
-    <el-cascader expand-trigger="hover" :options="options" v-model="selectedOptions2" @change="handleChange">
-  </el-cascader>
-  </el-form-item>
+    <el-form-item label="购买数量">
+      <el-input-number size="small" v-model="buyTicketForm.count" :min="1" :max="5"></el-input-number>
+    </el-form-item>
+    <el-form-item v-for="(i, index) in buyTicketForm.seat" :key="index" :label="'选座' + (index + 1)">
+    <el-cascader expand-trigger="hover" :options="options" v-model="i.value" @change="handleChange"></el-cascader>
+    </el-form-item>
     </el-form>    
   <span slot="footer" class="dialog-footer">
-  <el-button type="primary" @click="onSubmit(dialogData)">确定</el-button>
+    <red>共需支付: ¥{{buyTicketForm.totalprice}}</red>
+  <el-button type="primary" @click="onBuy(dialogData)">确定</el-button>
   <el-button @click="dialogFormVisible = false">取消</el-button>
   </span>
 </el-dialog>
@@ -104,9 +107,16 @@
       onBack () {
         this.$emit('onback')
       },
-      onSubmit (index) {
+      onSubmit (i) {
+        this.buyTicketForm.number = this.tableData[i].number
+        this.buyTicketForm.departure = this.tableData[i].departure
+        this.buyTicketForm.arrival = this.tableData[i].arrival
+        this.buyTicketForm.departureTime = this.tableData[i].departureTime
+        this.buyTicketForm.baseprice = this.tableData[i].price
         this.dialogFormVisible = true
-        this.dialogData = index
+      },
+      onBuy (i) {
+        this.$emit('onbuy', this.buyTicketForm)
       },
       deleteRow (index, rows) {
         rows.splice(index, 1)
@@ -132,89 +142,63 @@
       }
     },
     created () {
-      let fs = require('fs')
       console.log(this.$parent.form.departureDate)
-      this.form.date = this.$parent.form.departureDate
+      this.buyTicketForm.date = this.$parent.form.departureDate
       for (let i = 1; i < 60; i++) {
         this.options.push({value: i, label: i, children: [{value: 'A', label: 'A(靠窗)'}, {value: 'B', label: 'B'}, {value: 'C', label: 'C'}, {value: 'E', label: 'E'}, {value: 'F', label: 'F(靠窗)'}]})
       }
-      const { ipcRenderer } = require('electron')
-      ipcRenderer.send('get-app-path')
-      ipcRenderer.on('got-app-path', (event, path) => {
-        this.path = path
-        fs.readFile(path + '/lines.json', (err, data) => {
-          if (!err) {
-            let lines = JSON.parse(data)
-            console.log(lines)
-            for (let item of lines) {
-              console.log(item.stations)
-              console.log(this.$parent.form.departure)
-              for (let s = 0; s < item.stations.length - 1; s++) {
-                if (this.$parent.form.departure === '' || item.stations[s].name.indexOf(this.$parent.form.departure) === 0) {
-                  console.log(s + '' + item.stations[s].name)
-                  for (let i = s + 1; i < item.stations.length; i++) {
-                    if (this.$parent.form.arrival === '' || item.stations[i].name.indexOf(this.$parent.form.arrival) === 0) {
-                      let time1 = item.stations[s].time.split(':')
-                      let time2 = item.stations[i].time.split(':')
-                      let costmin = (parseInt(time2[0]) * 60 + parseInt(time2[1])) - (parseInt(time1[0]) * 60 + parseInt(time1[1]))
-                      let hour = costmin / 60
-                      let mins = costmin % 60
-                      let str = hour.toString() + ':' + mins.toString()
-                      this.tableData.push({
-                        number: item.number,
-                        departure: item.stations[s].name,
-                        arrival: item.stations[i].name,
-                        departureTime: item.stations[s].time,
-                        arrivalTime: item.stations[i].time,
-                        cost: str,
-                        businessClass: item.businessClass,
-                        firstClass: item.firstClass,
-                        secondClass: item.secondClass,
-                        prize: item.stations[i].prize - item.stations[s].prize
-                      })
-                      // break
-                    }
-                  }
-                }
-              }
-            }
-            let dep = []
-            let arr = []
-            for (let item of this.tableData) {
-              if (!dep.includes(item.departure)) {
-                dep.push(item.departure)
-                this.departureFilters.push({text: item.departure, value: item.departure})
-              }
-              if (!arr.includes(item.arrival)) {
-                arr.push(item.arrival)
-                this.arrivalFilters.push({text: item.arrival, value: item.arrival})
-              }
-            }
-            // this.tableData = lines
-            // this.$message({message: '读取完毕!', type: 'success', showClose: true})
-          } else {
-            this.$message({message: err, type: 'warning', showClose: true})
-          }
-        })
-      })
+      console.log(this.options)
     },
     data () {
       return {
         dialogFormVisible: false,
-        dialogData: 0,
-        form: {
+        buyTicketForm: {
           date: '1999-01-01',
-          seatClass: '1',
+          number: '',
           departure: '',
+          departureTime: '',
           arrival: '',
-          prize: ''
+          seatClass: '1',
+          baseprice: '',
+          price: '',
+          count: 1,
+          seat: [{value: []}],
+          totalprice: ''
         },
-        tableData: [],
-        departureFilters: [],
-        arrivalFilters: [],
         options: [],
         selectedOptions: [],
-        selectedOptions2: []
+        tableData: [],
+        departureFilters: [],
+        arrivalFilters: []
+      }
+    },
+    computed: {
+      basePriceChange () {
+        return this.buyTicketForm.baseprice
+      },
+      classChange () {
+        return this.buyTicketForm.seatClass
+      },
+      countChange () {
+        return this.buyTicketForm.count
+      }
+    },
+    watch: {
+      basePriceChange (val) {
+        this.buyTicketForm.totalprice = this.buyTicketForm.price = this.buyTicketForm.baseprice
+      },
+      classChange (val) {
+        this.buyTicketForm.price = parseInt(this.buyTicketForm.baseprice) * parseInt(this.buyTicketForm.seatClass)
+        this.buyTicketForm.totalprice = parseInt(this.buyTicketForm.price) * parseInt(this.buyTicketForm.count)
+      },
+      countChange (val) {
+        if (this.buyTicketForm.seat.length > val) {
+          this.buyTicketForm.seat.splice(this.buyTicketForm.seat.length - 1, 1)
+        }
+        if (this.buyTicketForm.seat.length < val) {
+          this.buyTicketForm.seat.push({value: []})
+        }
+        this.buyTicketForm.totalprice = parseInt(this.buyTicketForm.price) * parseInt(this.buyTicketForm.count)
       }
     }
   }

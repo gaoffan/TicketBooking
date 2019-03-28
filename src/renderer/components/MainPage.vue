@@ -5,7 +5,7 @@
   </div>
      <transition name="el-zoom-in-top">
        <div v-show="onresultShow" class="transition-box"> 
-          <search-result v-if="onresultShow" @onback="onBack" @oninit="onInit"></search-result>
+          <search-result ref="result" v-if="onresultShow" @onback="onBack" @oninit="onInit" @onbuy="onBuy"></search-result>
        </div>
      </transition>
 </div>
@@ -14,77 +14,109 @@
 <script>
   import SearchCard from './Controls/SearchCard.vue'
   import SearchResult from './Controls/SearchResult.vue'
-  // import app from 'electron'
+  let fs = require('fs')
   export default {
     name: 'main-page',
     components: {
       SearchCard, SearchResult
     },
     methods: {
-      open (link) {
-        this.$electron.shell.openExternal(link)
-      },
       onSubmit (departure, arrival, departureDate) {
         if (!departureDate) {
           this.$message({message: '请选择日期！', type: 'warning'})
           return
         }
+        this.onsearch = false
+        this.onresultShow = true
+        console.log(this.$refs.result)
+        fs.readFile(this.path + '/lines.json', (err, data) => {
+          if (!err) {
+            let lines = JSON.parse(data)
+            console.log(lines)
+            for (let item of lines) {
+              console.log(item.stations)
+              console.log(departure)
+              for (let s = 0; s < item.stations.length - 1; s++) {
+                if (departure === '' || item.stations[s].name.indexOf(departure) === 0) {
+                  console.log(item.stations[s].price)
+                  for (let i = s + 1; i < item.stations.length; i++) {
+                    if (arrival === '' || item.stations[i].name.indexOf(arrival) === 0) {
+                      let time1 = item.stations[s].time.split(':')
+                      let time2 = item.stations[i].time.split(':')
+                      let costmin = (parseInt(time2[0]) * 60 + parseInt(time2[1])) - (parseInt(time1[0]) * 60 + parseInt(time1[1]))
+                      let hour = costmin / 60
+                      let mins = costmin % 60
+                      let str = hour.toString() + ':' + mins.toString()
+                      this.$refs.result.tableData.push({
+                        number: item.number,
+                        departure: item.stations[s].name,
+                        arrival: item.stations[i].name,
+                        departureTime: item.stations[s].time,
+                        arrivalTime: item.stations[i].time,
+                        cost: str,
+                        businessClass: item.businessClass,
+                        firstClass: item.firstClass,
+                        secondClass: item.secondClass,
+                        price: parseInt(item.stations[i].price) - parseInt(item.stations[s].price)
+                      })
+                    }
+                  }
+                }
+              }
+            }
+            console.log(this.$refs.result.tableData)
+            let dep = []
+            let arr = []
+            for (let item of this.tableData) {
+              if (!dep.includes(item.departure)) {
+                dep.push(item.departure)
+                this.$refs.result.departureFilters.push({text: item.departure, value: item.departure})
+              }
+              if (!arr.includes(item.arrival)) {
+                arr.push(item.arrival)
+                this.$refs.result.arrivalFilters.push({text: item.arrival, value: item.arrival})
+              }
+            }
+          } else {
+            this.$message({message: err, type: 'warning', showClose: true})
+          }
+        })
         this.form.departureDate = departureDate
         this.form.departure = departure
         this.form.arrival = arrival
-        this.onsearch = false
-        this.onresultShow = true
       },
       onBack () {
         this.onresultShow = false
         this.onsearch = true
+      },
+      onBuy (form) {
+        console.log(form)
       },
       onInit (date) {
         console.log(this.form.departureDate)
       }
     },
     created () {
-      // console.log(require('electron'))
-      // console.log()
-      // console.log(addon.hello1());
-      // console.log(addon.addOne(2));
+      const { ipcRenderer } = require('electron')
+      ipcRenderer.send('get-app-path')
+      ipcRenderer.on('got-app-path', (event, path) => {
+        this.path = path
+      })
     },
     data () {
       return {
-        path: process.cwd(),
+        path: '',
         onsearch: true,
         onresultShow: false,
         resultData: '999',
-        pickerOptions1: {
-          disabledDate (time) {
-            return time.getTime() > Date.now()
-          },
-          shortcuts: [{
-            text: '今天',
-            onClick (picker) {
-              picker.$emit('pick', new Date())
-            }
-          }, {
-            text: '明天',
-            onClick (picker) {
-              const date = new Date()
-              date.setTime(date.getTime() + 3600 * 1000 * 24)
-              picker.$emit('pick', date)
-            }
-          }, {
-            text: '一周后',
-            onClick (picker) {
-              const date = new Date()
-              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', date)
-            }
-          }]
-        },
         form: {
           departure: '',
           arrival: '',
           departureDate: ''
-        }
+        },
+        tableData: [],
+        departureFilters: [],
+        arrivalFilters: []
       }
     }
   }
