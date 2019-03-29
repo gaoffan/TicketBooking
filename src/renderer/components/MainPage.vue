@@ -1,14 +1,14 @@
 <template>
-<div class="block">
+  <div class="block">
     <div class="input-card" v-show="onsearch"> 
-    <search-card v-if="onsearch" @search="onSubmit"></search-card>
+      <search-card v-if="onsearch" @search="onSubmit"></search-card>
+    </div>
+    <transition name="el-zoom-in-top">
+      <div v-show="onresultShow" class="transition-box"> 
+        <search-result ref="result" v-if="onresultShow" @onback="onBack" @onbuy="onBuy"></search-result>
+      </div>
+    </transition>
   </div>
-     <transition name="el-zoom-in-top">
-       <div v-show="onresultShow" class="transition-box"> 
-          <search-result ref="result" v-if="onresultShow" @onback="onBack" @oninit="onInit" @onbuy="onBuy"></search-result>
-       </div>
-     </transition>
-</div>
 </template>
 
 <script>
@@ -28,7 +28,7 @@
         }
         this.onsearch = false
         this.onresultShow = true
-        console.log(this.$refs.result)
+        // console.log(this.$refs.result)
         fs.readFile(this.path + '/lines.json', (err, data) => {
           if (!err) {
             let lines = JSON.parse(data)
@@ -44,7 +44,7 @@
                       let time1 = item.stations[s].time.split(':')
                       let time2 = item.stations[i].time.split(':')
                       let costmin = (parseInt(time2[0]) * 60 + parseInt(time2[1])) - (parseInt(time1[0]) * 60 + parseInt(time1[1]))
-                      let hour = costmin / 60
+                      let hour = Math.floor(costmin / 60)
                       let mins = costmin % 60
                       let str = hour.toString() + ':' + mins.toString()
                       console.log(item.secondClass + '111')
@@ -65,10 +65,9 @@
                 }
               }
             }
-            // console.log(this.$refs.result.tableData)
             let dep = []
             let arr = []
-            for (let item of this.tableData) {
+            for (let item of this.$refs.result.tableData) {
               if (!dep.includes(item.departure)) {
                 dep.push(item.departure)
                 this.$refs.result.departureFilters.push({text: item.departure, value: item.departure})
@@ -78,6 +77,7 @@
                 this.$refs.result.arrivalFilters.push({text: item.arrival, value: item.arrival})
               }
             }
+            console.log(dep)
             console.log(233)
             fs.readFile(this.path + '/tickets.json', (err, data) => {
               if (!err) {
@@ -92,7 +92,7 @@
                         // console.log(x.secondClass)
                       } else if (i.seatClass === '2') {
                         x.firstClass--
-                      } else {
+                      } else if (i.seatClass === '3') {
                         x.businessClass--
                       }
                     }
@@ -125,11 +125,11 @@
             seat: form.seat[i]
           })
         }
-        console.log(dat)
+        // console.log(dat)
         fs.readFile(this.path + '/tickets.json', (err, data) => { // 写入文件
           if (!err) {
-            let lines = JSON.parse(data)
-            let newd = lines.concat(dat)
+            let tickets = JSON.parse(data)
+            let newd = tickets.concat(dat)
             fs.writeFile(this.path + '/tickets.json', JSON.stringify(newd), (err) => {
               if (!err) {
                 this.$message({message: '购买成功!', type: 'success', showClose: true})
@@ -147,9 +147,6 @@
             })
           }
         })
-      },
-      onInit (date) {
-        console.log(this.form.departureDate)
       }
     },
     created () {
@@ -164,7 +161,6 @@
         path: '',
         onsearch: true,
         onresultShow: false,
-        resultData: '999',
         form: {
           departure: '',
           arrival: '',

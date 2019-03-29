@@ -70,9 +70,6 @@
           if (!err) {
             let lines = JSON.parse(data)
             this.tableData = lines
-            // this.$message({message: '读取完毕!', type: 'success', showClose: true})
-          } else {
-            // this.$message({message: err, type: 'warning', showClose: true})
           }
         })
       })
@@ -87,7 +84,6 @@
 </script>
 
 <style>
-
 .tag {
   margin-right: 0.2rem 
 }

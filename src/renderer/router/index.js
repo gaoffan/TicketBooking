@@ -13,11 +13,11 @@ export default new Router({
     {
       path: '/orders',
       name: 'orders-page',
-      component: require('@/components/orders').default
+      component: require('@/components/Orders').default
     },
     {
-      path: '/addTrainNumber',
-      name: 'addTrainNumber-page',
+      path: '/admin',
+      name: 'admin-page',
       component: require('@/components/Admin').default
     }
   ]

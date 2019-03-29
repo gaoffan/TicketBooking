@@ -40,8 +40,7 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    // title: 'Ticket', // 火车票管理系统
-    height: 800,
+    height: 600,
     useContentSize: true,
     width: 1000,
     webPreferences: {

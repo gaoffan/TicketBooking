@@ -68,17 +68,17 @@
       label="操作"
       width="100">
       <template slot-scope="scope">
-        <el-button type="primary" size="mini" @click="onSubmit(scope.$index)">预定</el-button>
+        <el-button type="primary" size="mini" @click="onSubmit(scope.$index)">预订</el-button>
       </template>
     </el-table-column>
   </el-table>
-  <el-dialog title="预定车票" :visible.sync="dialogFormVisible" width="600px">
+  <el-dialog title="预订车票" v-if="dialogFormVisible" :visible.sync="dialogFormVisible" width="600px">
     <div style="text-align:center">
     <h1>{{buyTicketForm.number}} {{buyTicketForm.departure}} -> {{buyTicketForm.arrival}} {{buyTicketForm.departureTime}} 
       <red>        ¥{{buyTicketForm.price}}/张</red></h1>
     </div>
     <el-form :model="buyTicketForm" label-width="80px"> 
-    <el-form-item label="席位等级">
+    <el-form-item label="席位等级" required prop="seatClass">
     <el-radio v-model="buyTicketForm.seatClass" :disabled="tableData[index].businessClass === 0" 
     label="3" border size="medium" @change="onClassChange">商务座</el-radio>
     <el-radio v-model="buyTicketForm.seatClass" :disabled="tableData[index].firstClass === 0" 
@@ -86,16 +86,16 @@
     <el-radio v-model="buyTicketForm.seatClass" :disabled="tableData[index].secondClass === 0" 
     label="1" border size="medium" @change="onClassChange">二等座</el-radio>
     </el-form-item>
-    <el-form-item label="购买数量">
+    <el-form-item label="购买数量" required prop="count">
       <el-input-number size="small" v-model="buyTicketForm.count" :min="1" :max="5"></el-input-number>
     </el-form-item>
-    <el-form-item v-for="(i, index) in buyTicketForm.seat" :key="index" :label="'选座' + (index + 1)">
-    <el-cascader expand-trigger="hover" :options="options" v-model="i.value" @change="handleChange"></el-cascader>
+    <el-form-item required prop="seat" v-for="(i, index) in buyTicketForm.seat" :key="index" :label="'选座' + (index + 1)">
+    <el-cascader expand-trigger="hover" :options="options" v-model="i.value"></el-cascader>
     </el-form-item>
     </el-form>    
   <span slot="footer" class="dialog-footer">
     <red>共需支付: ¥{{buyTicketForm.totalprice}}</red>
-  <el-button type="primary" @click="onBuy()">确定</el-button>
+  <el-button style="margin-left: 1rem" type="primary" @click="onBuy()">确定</el-button>
   <el-button @click="dialogFormVisible = false">取消</el-button>
   </span>
 </el-dialog>
@@ -177,13 +177,13 @@
         this.buyTicketForm.baseprice = this.tableData[i].price
         this.dialogFormVisible = true
       },
-      onBuy () {
+      onBuy () { // yyc
         if (!this.buyTicketForm.seatClass) {
           this.$message({message: '请选择席位等级！', type: 'warning'})
           return
         }
         // console.log(this.buyTicketForm.seat)
-        let seat = []
+        let seat = [] // 进行预处理
         for (let i of this.buyTicketForm.seat) {
           if (i.value.length === 0) {
             this.$message({message: '请选择座位！', type: 'warning'})
@@ -196,37 +196,44 @@
             seat.push(i.value[0] + i.value[1] + i.value[2])
           }
         }
-        console.log(seat)
+        if (this.buyTicketForm.seatClass === '3') {
+          let x = parseInt(this.tableData[this.index].businessClass) - parseInt(this.buyTicketForm.count)
+          if (x > -1) {
+            this.tableData[this.index].businessClass = x
+          } else {
+            this.$message({message: '超过了可预订的票数！', type: 'warning'})
+            return
+          }
+        } else if (this.buyTicketForm.seatClass === '2') {
+          let x = parseInt(this.tableData[this.index].firstClass) - parseInt(this.buyTicketForm.count)
+          if (x > -1) {
+            this.tableData[this.index].firstClass = x
+          } else {
+            this.$message({message: '超过了可预订的票数！', type: 'warning'})
+            return
+          }
+        } else if (this.buyTicketForm.seatClass === '1') {
+          let x = parseInt(this.tableData[this.index].secondClass) - parseInt(this.buyTicketForm.count)
+          if (x > -1) {
+            this.tableData[this.index].secondClass = x
+          } else {
+            this.$message({message: '超过了可预订的票数！', type: 'warning'})
+            return
+          }
+        }
+        // console.log(seat)
         this.$emit('onbuy', this.buyTicketForm) // 买票
         this.dialogFormVisible = false
-      },
-      deleteRow (index, rows) {
-        rows.splice(index, 1)
-      },
-      resetDateFilter () {
-        this.$refs.filterTable.clearFilter('date')
-      },
-      clearFilter () {
-        this.$refs.filterTable.clearFilter()
-      },
-      formatter (row, column) {
-        return row.address
-      },
-      filterTag (value, row) {
-        return row.tag === value
       },
       filterHandler (value, row, column) {
         const property = column['property']
         return row[property] === value
-      },
-      handleChange (value) {
-        console.log(value)
       }
     },
     created () {
-      console.log(this.$parent.form.departureDate)
+      // console.log(this.$parent.form.departureDate)
       this.buyTicketForm.date = this.$parent.form.departureDate
-      console.log(this.options)
+      // console.log(this.options)
     },
     data () {
       return {
@@ -285,12 +292,12 @@
 </script>
 
 <style>
-.topbar {
-  color: #303133;
-  margin-bottom: 1rem;
-  margin-right: 1rem;
-}
-red{
-  color:red;
-}
+  .topbar {
+    color: #303133;
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+  }
+  red{
+    color:red;
+  }
 </style>

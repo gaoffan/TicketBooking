@@ -13,7 +13,7 @@
       <i class="el-icon-document"></i>
       <span slot="title">我的订单</span>
     </el-menu-item>
-    <el-menu-item index="3" route="/addTrainNumber">
+    <el-menu-item index="3" route="/admin">
       <i class="el-icon-setting"></i>
       <span slot="title">管理面板</span>
     </el-menu-item>
@@ -25,32 +25,25 @@
 
 <script>
   export default {
-    name: 'ticket-booking',
-    data () {
-      return {
-        activeIndex: '1'
-      }
-    }
+    name: 'ticket-booking'
   }
 </script>
 
 <style>
-  /* CSS */
   body {
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
-
-.container {
+  .container {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 100%;
-}
-.header {
+  }
+  .header {
     text-align: center;
     padding: 0;
-}
-.main {
-  padding: 10px;
-}
+  }
+  .main {
+    padding: 10px;
+  }
 </style>

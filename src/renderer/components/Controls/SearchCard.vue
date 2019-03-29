@@ -3,13 +3,13 @@
   <el-card class="box-card input-card">
     <h3 class="t-c">车票查询</h3>
     <el-form ref="form" :model="form" label-width="80px">
-    <el-form-item label="出发地" class="input">
+    <el-form-item label="出发地" class="input" prop="departure">
       <el-input v-model="form.departure"></el-input>
     </el-form-item>
-    <el-form-item label="到达地" class="input">
+    <el-form-item label="到达地" class="input" prop="arrival">
       <el-input v-model="form.arrival"></el-input>
     </el-form-item>
-    <el-form-item label="出发日期">
+    <el-form-item label="出发日期" required prop="departureDate">
       <el-date-picker v-model="form.departureDate" align="right" type="date" placeholder="请选择出发日期" :picker-options="pickerOptions1" value-format="yyyy-MM-dd"></el-date-picker>
     </el-form-item>
     <div class="t-c">

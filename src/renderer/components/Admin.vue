@@ -1,40 +1,40 @@
 <template>
-  <el-tabs :tab-position="tabpos" style="" lazy @tab-click="refresh">
+  <el-tabs :tab-position="tabpos" style="" lazy>
     <el-tab-pane label="记录管理">
-        <line-manager v-if="show"></line-manager>
+      <line-manager v-if="show"></line-manager>
     </el-tab-pane>
     <el-tab-pane label="新增记录" lazy>
-    <el-card class="input-card">
-    <el-form ref="form" :model="form" label-width="120px" >
-    <el-form-item label="车次" required>
-        <el-input v-model="form.number"></el-input>
-    </el-form-item>
-    <el-form-item v-for="(station, index) in form.stations" :label="'途经 ' + index" :key="station.key" required>
-        <el-input v-model="station.name"></el-input>
-        <el-input class="time" placeholder="价格" v-model="station.price"></el-input>
-        <el-time-select class="time" placeholder="出发时间" v-model="station.time" :picker-options="{start: '05:30',step: '00:01',end: '23:59'}"></el-time-select>
-        <el-button size="small" type="danger" @click.prevent="removeStation(station)">删除</el-button>
-    </el-form-item>
-    <div class="btn2">
-    <el-button class="btn2" type="success" @click="addStation">新增站点</el-button>
-    </div>
-    <el-form-item label="商务座数量" required>
-        <el-input v-model="form.businessClass"></el-input>
-    </el-form-item>
-    <el-form-item label="一等座数量" required>
-        <el-input v-model="form.firstClass"></el-input>
-    </el-form-item>
-    <el-form-item label="二等座数量" required>
-        <el-input v-model="form.secondClass"></el-input>
-    </el-form-item>
-    <div class="bottom clearfix">
-        <el-button class="btn" @click="resetForm('form')">重置</el-button>
-        <el-button class="btn" type="primary" @click="submit">提交</el-button>
-    </div>
-    </el-form>              
-  </el-card>
-</el-tab-pane> 
-</el-tabs>
+      <el-card>
+        <el-form ref="form" :model="form" label-width="100px" >
+          <el-form-item label="车次" required prop="number">
+            <el-input v-model="form.number"></el-input>
+          </el-form-item>
+          <el-form-item label="商务座数量" required prop="businessClass">
+            <el-input v-model="form.businessClass"></el-input>
+          </el-form-item>
+          <el-form-item label="一等座数量" required prop="firstClass">
+            <el-input v-model="form.firstClass"></el-input>
+          </el-form-item>
+          <el-form-item label="二等座数量" required prop="secondClass">
+            <el-input v-model="form.secondClass"></el-input>
+          </el-form-item>
+          <el-form-item prop="stations" v-for="(station, index) in form.stations" :label="'途经第' + (index + 1) + '站:'" :key="index" required>
+            <el-input v-model="station.name"></el-input>
+            <el-input class="time" placeholder="区间价格" v-model="station.price"></el-input>
+            <el-time-select class="time" placeholder="出发时间" v-model="station.time" :picker-options="{start: '05:30',step: '00:01',end: '23:59'}"></el-time-select>
+            <el-button size="small" type="danger" @click.prevent="removeStation(station)">删除</el-button>
+          </el-form-item>
+          <div class="btn2">
+            <el-button class="btn2" type="success" @click="addStation">新增站点</el-button>
+          </div>
+          <div class="bottom clearfix">
+            <el-button class="btn" @click="resetForm('form')">重置</el-button>
+            <el-button class="btn" type="primary" @click="submit">提交</el-button>
+          </div>
+        </el-form>              
+      </el-card>
+    </el-tab-pane> 
+  </el-tabs>
 </template>
 
 <script>
@@ -54,20 +54,22 @@
         // }
         fs.readFile(this.path + '/lines.json', (err, data) => {
           if (!err) {
-            let lines = JSON.parse(data)
-            lines.push(this.form)
+            let lines = JSON.parse(data) // 读取
+            lines.push(this.form) // 追加
             fs.writeFile(this.path + '/lines.json', JSON.stringify(lines), (err) => {
               if (!err) {
                 this.$message({message: '添加成功!', type: 'success', showClose: true})
+                this.refresh()
               } else {
                 this.$message({message: err, type: 'warning', showClose: true})
               }
             })
           } else {
-            let arr = [this.form]
+            let arr = [this.form] // 直接
             fs.writeFile(this.path + '/lines.json', JSON.stringify(arr), (err) => {
               if (!err) {
                 this.$message({message: '添加成功!', type: 'success', showClose: true})
+                this.refresh()
               } else {
                 this.$message({message: err, type: 'warning', showClose: true})
               }
@@ -88,14 +90,13 @@
         this.form.stations.push({
           name: '',
           price: '',
-          time: '',
-          key: Date.now()
+          time: ''
         })
       },
       refresh () {
         console.log(0)
         this.show = false
-        this.show = true
+        this.$nextTick(() => (this.show = true)) // 刷新组件
       }
     },
     created () {
@@ -104,6 +105,7 @@
       ipcRenderer.on('got-app-path', (event, path) => {
         this.path = path
       })
+      this.addStation()
     },
     data () {
       return {
@@ -115,7 +117,7 @@
           businessClass: 100,
           firstClass: 100,
           secondClass: 100,
-          stations: [{ name: '', time: '', price: 0 }]
+          stations: [{name: '', price: '0', time: ''}]
         }
       }
     }

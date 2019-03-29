@@ -1,13 +1,13 @@
 <template>
   <el-row>
-  <el-col :span="8" v-for="(o, index) in orders" :key="index">
-  <el-card class="box-card" shadow="hover">
-    <h1 style="margin:0;text-align:center">{{o.number}} {{o.departure}} -> {{o.arrival}}</h1>
-    <p style="color:#909399"> {{o.date}}  {{o.startTime}}出发 <br> {{o.class}}座  座位:{{o.seat}}  </p>  
-      <el-button style="float: right" size="small" type="danger" round @click="onSubmit(index)">退票</el-button>
-    </el-card>
-  </el-col>
-</el-row>
+    <el-col :span="8" v-for="(o, index) in orders" :key="index">
+      <el-card class="box-card" shadow="hover">
+        <h1 style="margin:0;text-align:center">{{o.number}} {{o.departure}} -> {{o.arrival}}</h1>
+        <p style="color:#909399"> {{o.date}}  {{o.startTime}}出发 <br> {{o.class}}座  座位:{{o.seat}}  </p>  
+        <el-button style="float: right" size="small" type="danger" round @click="onSubmit(index)">退票</el-button>
+      </el-card>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -15,16 +15,13 @@
   export default {
     name: 'orders-page',
     methods: {
-      open (link) {
-        this.$electron.shell.openExternal(link)
-      },
       onSubmit (key) {
         // console.log(key)
         fs.readFile(this.path + '/tickets.json', (err, data) => {
           if (!err) {
             this.ordersSaved.splice(key, 1)
             this.orders.splice(key, 1)
-            console.log(this.ordersSaved)
+            // console.log(this.ordersSaved)
             fs.writeFile(this.path + '/tickets.json', JSON.stringify(this.ordersSaved), (err) => {
               if (!err) {
                 this.$message({message: '退票成功！', type: 'success'})
@@ -60,7 +57,7 @@
                 arrival: i.arrival,
                 startTime: i.departureTime,
                 date: i.date.slice(0, 10),
-                seat: i.seat.value[0] + i.seat.value[1] + i.seat.value[2],
+                seat: i.seat.value[0] + '车' + i.seat.value[1] + '列' + i.seat.value[2],
                 class: text
               })
             }
