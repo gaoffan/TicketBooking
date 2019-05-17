@@ -1,6 +1,6 @@
 # ticket-booking
 
-> train ticket booking system
+This is a simple train ticket booking system written in my programming week.
 
 #### Build Setup
 
@@ -16,7 +16,6 @@ npm run build
 
 # lint all JS/Vue component files in `src/`
 npm run lint
-
 
 ```
 
